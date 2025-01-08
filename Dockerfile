@@ -1,37 +1,49 @@
 FROM kalilinux/kali-rolling
 
-# Update and install essential tools
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+RUN apt-get update && apt-get install -y \
+    man-db \
+    manpages \
+    manpages-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y \
     kali-tools-top10 \
-    python3 \
+    kali-tools-forensics \
+    kali-tools-web \
     python3-pip \
     git \
     vim \
-    curl \
-    wget \
-    nmap \
+    tmux \
+    gdb \
+    radare2 \
+    gobuster \
+    wordlists \
+    steghide \
+    binwalk \
+    foremost \
+    john \
+    hashcat \
     netcat-traditional \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# RUN apt-get install python3 python3-pip python3-dev libffi-dev build-essential
+# RUN python3 -m pip install --upgrade pip
+# RUN python3 -m pip install --upgrade pwntools
+
+
 WORKDIR /root
 
-# Create tools directory
-RUN mkdir -p /root/tools
+RUN mkdir -p /root/ctf /root/tools /root/wordlists
 
-# Set up Python environment
-# RUN python3 -m pip install --upgrade pip
-# RUN pip3 install requests scapy python-nmap
+RUN git clone https://github.com/danielmiessler/SecLists /root/wordlists/SecLists
+RUN git clone https://github.com/swisskyrepo/PayloadsAllTheThings /root/tools/PayloadsAllTheThings
 
-# Optional: Add your custom tools or scripts here
-# COPY ./scripts /root/tools/
+RUN mandb
+ENV TERM=xterm-256color
 
-# Set environment variables
-ENV TERM=xterm
+VOLUME ["/root/ctf", "/root/tools"]
 
-# Set default shell to bash
 SHELL ["/bin/bash", "-c"]
 
-# Default command
 CMD ["/bin/bash"]
 
